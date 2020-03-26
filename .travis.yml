@@ -11,11 +11,7 @@ cache:
 stages:
   - test
   - name: deploy
-    # Deploy packages to PackageCloud from tags and master
-    # see:
-    #   * https://github.com/tarantool/tarantool/issues/3745
-    #   * https://github.com/travis-ci/travis-ci/issues/7780#issuecomment-302389370
-    if: (branch = master OR tag IS present) AND (env(PACKAGECLOUD_TOKEN) IS present)
+    if: env(PACKAGECLOUD_TOKEN) IS present
 
 env:
   global:
@@ -32,6 +28,7 @@ _deploy_to_packagecloud: &deploy_to_packagecloud
   dist: $OS/$DIST
   package_glob: build/*.{rpm,deb}
   skip_cleanup: true
+  on: {branch: master}
 
 # Pack and deploy packages to PackageCloud
 _packpack: &packpack
@@ -41,16 +38,39 @@ _packpack: &packpack
     - packpack/packpack
     - ls -l build/
   deploy:
+    # Deploy packages to PackageCloud from tags and master
+    # see:
+    #   * https://github.com/tarantool/tarantool/issues/3745
+    #   * https://github.com/travis-ci/travis-ci/issues/7780#issuecomment-302389370
     - <<: *deploy_to_packagecloud
       repository: "1_10"
     - <<: *deploy_to_packagecloud
+      repository: "1_10"
+      on: {tags: true}
+
+    - <<: *deploy_to_packagecloud
       repository: "2x"
+    - <<: *deploy_to_packagecloud
+      repository: "2x"
+      on: {tags: true}
+
     - <<: *deploy_to_packagecloud
       repository: "2_2"
     - <<: *deploy_to_packagecloud
+      repository: "2_2"
+      on: {tags: true}
+
+    - <<: *deploy_to_packagecloud
       repository: "2_3"
     - <<: *deploy_to_packagecloud
+      repository: "2_3"
+      on: {tags: true}
+
+    - <<: *deploy_to_packagecloud
       repository: "2_4"
+    - <<: *deploy_to_packagecloud
+      repository: "2_4"
+      on: {tags: true}
 
 jobs:
   include:
