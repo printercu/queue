@@ -55,12 +55,6 @@ jobs:
       script: ./test.sh
     - env: VERSION=2x
       script: ./test.sh
-    - env: VERSION=2_2
-      script: ./test.sh
-    - env: VERSION=2_3
-      script: ./test.sh
-    - env: VERSION=2_4
-      script: ./test.sh
 
     - <<: *packpack
       env: OS=el DIST=8
